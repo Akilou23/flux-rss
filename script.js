@@ -11,9 +11,8 @@ form.addEventListener('submit', event => {
   messageSent.style.display = 'block';
 
   // Envoyer le message à votre API en utilisant la méthode fetch()
-   // PENSER A REMPLACER  /api/message par l'URL de votre API réelle.
 
-  fetch('/api/message', {
+  fetch('/flux-rss', { 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

@@ -5,7 +5,8 @@ const rss = require('rss');
 const { KV } = require('@vercel/kv');
 
 // Créer une nouvelle instance de la classe KV avec le nom de votre espace de noms KV
-const kv = new KV('nom-de-votre-espace-de-noms');
+const kv = new KV(process.env.KV_NAMESPACE);
+
 
 // Créer une nouvelle instance d'Express
 const app = express();
@@ -14,7 +15,7 @@ const app = express();
 app.use(express.json());
 
 // Définir la route POST pour envoyer un message
-app.post('/api/message', async (req, res) => {
+app.post('https://flux-rl0a49okg-akilou23s-projects.vercel.app/', async (req, res) => {
   const message = req.body.message;
 
   // Stocker le message dans la base de données KV
@@ -28,7 +29,7 @@ app.post('/api/message', async (req, res) => {
 });
 
 // Définir la route GET pour récupérer le flux RSS
-app.get('/api/rss', async (req, res) => {
+app.get('/flux-rss', async (req, res) => {
   try {
     // Récupérer les messages stockés dans la base de données KV
     const messages = await kv.hgetall('messages');
@@ -38,7 +39,7 @@ app.get('/api/rss', async (req, res) => {
       title: 'Votre flux RSS',
       description: 'Flux RSS généré à partir des messages envoyés par les utilisateurs',
       site_url: 'https://votre-site-web.com',
-      feed_url: 'https://votre-site-web.com/api/rss',
+      feed_url: 'https://flux-rl0a49okg-akilou23s-projects.vercel.app/flux-rss',
       language: 'fr',
       ttl: '60',
     });
