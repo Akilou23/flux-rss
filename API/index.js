@@ -38,7 +38,7 @@ app.get('/flux-rss', async (req, res) => {
     const feed = new rss({
       title: 'Votre flux RSS',
       description: 'Flux RSS généré à partir des messages envoyés par les utilisateurs',
-      site_url: 'https://votre-site-web.com',
+      site_url: 'https://akilou23.github.io/flux-rss/',
       feed_url: 'https://flux-rl0a49okg-akilou23s-projects.vercel.app/flux-rss',
       language: 'fr',
       ttl: '60',
@@ -49,7 +49,7 @@ app.get('/flux-rss', async (req, res) => {
       feed.item({
         title: message,
         description: message,
-        url: 'https://votre-site-web.com',
+        url: 'https://akilou23.github.io/flux-rss/',
         date: new Date(),
       });
     }
