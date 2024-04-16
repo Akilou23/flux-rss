@@ -1,3 +1,5 @@
+//script qui est exécuté dans "index.html" et qui envoie le message saisait à l'API
+
 const form = document.getElementById('my-form');
 const messageInput = document.getElementById('message');
 const messageSent = document.getElementById('message-sent');
