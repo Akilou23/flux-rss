@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Akilou23/flux-rss/issues"
   },
-  "homepage": "https://github.com/Akilou23/flux-rss#readme"
+  "homepage": "https://github.com/Akilou23/flux-rss#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
