@@ -5,7 +5,7 @@ const rss = require('rss');
 const { KV } = require('@vercel/kv');
 
 // Créer une nouvelle instance de la classe KV avec le nom de votre espace de noms KV
-const kv = new KV(process.env.KV_NAMESPACE);
+const kv = new KV(process.env.KV_URL);
 
 
 // Créer une nouvelle instance d'Express

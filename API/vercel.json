@@ -15,5 +15,6 @@
       "src": "/(.*)",
       "dest": "/static/$1"
     }
-  ]
+  ],
+  "nodeVersion": "20.x"
 }
