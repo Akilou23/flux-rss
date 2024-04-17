@@ -4,9 +4,10 @@ const axios = require('axios');
 const rss = require('rss');
 const { KV } = require('@vercel/kv');
 
+console.log('Node.js version:', process.version);
+
 // Créer une nouvelle instance de la classe KV avec le nom de votre espace de noms KV
 const kv = new KV(process.env.KV_URL);
-console.log('Node.js version:', process.version);
 
 
 // Créer une nouvelle instance d'Express
