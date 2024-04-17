@@ -1,4 +1,4 @@
-// Importer les dépendances nécessaires
+// Importer les dépendances nécessaires.
 const express = require('express');
 const axios = require('axios');
 const rss = require('rss');
