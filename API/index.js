@@ -1,12 +1,19 @@
-// Importer les dépendances nécessaires.
 const express = require('express');
 const axios = require('axios');
 const rss = require('rss');
-const { KV } = require('@vercel/kv');
+const redis = require('redis');
 
-// Créer une nouvelle instance de la classe KV avec le nom de votre espace de noms KV
-const kv = new KV(process.env.KV_URL);
+//console.log('Node.js version:', process.version);
 
+// Créer une nouvelle instance de Redis avec le nom de votre espace de noms Redis
+const client = redis.createClient({
+  url: process.env.REDIS_URL,
+});
+
+// Gérer les erreurs de connexion Redis
+client.on('error', (error) => {
+  console.error('Erreur de connexion Redis :', error);
+});
 
 // Créer une nouvelle instance d'Express
 const app = express();
@@ -14,30 +21,13 @@ const app = express();
 // Définir le middleware pour parser les requêtes JSON entrantes
 app.use(express.json());
 
-
 // Définir la route POST pour envoyer un message
-
-// app.post('https://flux-rl0a49okg-akilou23s-projects.vercel.app/', async (req, res) => {
-//   const message = req.body.message;
-
-//   // Stocker le message dans la base de données KV
-//   try {
-//     await kv.hset('messages', message);
-//     res.status(201).json({ message: 'Message envoyé avec succès' });
-//   } catch (error) {
-//     console.error('Erreur lors de l\'envoi du message :', error);
-//     res.status(500).send('Erreur lors de l\'envoi du message');
-//   }
-// });
 app.post('/', async (req, res) => {
   const message = req.body.message;
 
-  // Générer une clé unique pour chaque message
-  const key = Date.now().toString();
-
-  // Stocker le message dans la base de données KV
+  // Stocker le message dans la base de données Redis
   try {
-    await kv.hset('messages', key, message);
+    await client.hset('messages', message, message);
     res.status(201).json({ message: 'Message envoyé avec succès' });
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message :', error);
@@ -45,49 +35,11 @@ app.post('/', async (req, res) => {
   }
 });
 
-
-
 // Définir la route GET pour récupérer le flux RSS
-
-// app.get('/flux-rss', async (req, res) => {
-//   try {
-//     // Récupérer les messages stockés dans la base de données KV
-//     const messages = await kv.hgetall('messages');
-
-//     // Créer un nouvel objet RSS
-//     const feed = new rss({
-//       title: 'Votre flux RSS',
-//       description: 'Flux RSS généré à partir des messages envoyés par les utilisateurs',
-//       site_url: 'https://akilou23.github.io/flux-rss/',
-//       feed_url: 'https://flux-rl0a49okg-akilou23s-projects.vercel.app/flux-rss',
-//       language: 'fr',
-//       ttl: '60',
-//     });
-
-//     // Ajouter chaque message au flux RSS
-//     for (const message of messages) {
-//       feed.item({
-//         title: message,
-//         description: message,
-//         url: 'https://akilou23.github.io/flux-rss/',
-//         date: new Date(),
-//       });
-//     }
-
-//     // Définir le type de contenu de la réponse en tant que flux RSS
-//     res.set('Content-Type', 'application/rss+xml');
-
-//     // Envoyer le flux RSS en tant que réponse
-//     res.send(feed.xml());
-//   } catch (error) {
-//     console.error('Erreur lors de la génération du flux RSS :', error);
-//     res.status(500).send('Erreur lors de la génération du flux RSS');
-//   }
-// });
 app.get('/flux-rss', async (req, res) => {
   try {
-    // Récupérer les clés de tous les messages stockés dans la base de données KV
-    const keys = await kv.hkeys('messages');
+    // Récupérer les messages stockés dans la base de données Redis
+    const messages = await client.hgetall('messages');
 
     // Créer un nouvel objet RSS
     const feed = new rss({
@@ -100,8 +52,7 @@ app.get('/flux-rss', async (req, res) => {
     });
 
     // Ajouter chaque message au flux RSS
-    for (const key of keys) {
-      const message = await kv.hget('messages', key);
+    for (const message of Object.values(messages)) {
       feed.item({
         title: message,
         description: message,
@@ -120,8 +71,6 @@ app.get('/flux-rss', async (req, res) => {
     res.status(500).send('Erreur lors de la génération du flux RSS');
   }
 });
-
-
 
 // Démarrer le serveur et écouter les requêtes entrantes
 const PORT = process.env.PORT || 3000;
